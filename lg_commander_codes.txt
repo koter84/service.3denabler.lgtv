@@ -1,0 +1,12 @@
+http://openlgtv.org.ru/wiki/index.php/Remote_control_key_codes
+http://www.binaryhexconverter.com/hex-to-decimal-converter
+
+#enable 3d
+220 == 3d
+68 == OK
+68 == OK
+
+# disable 3d
+220 == 3d
+68 == OK
+
