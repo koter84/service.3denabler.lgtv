@@ -32,29 +32,36 @@ import select
 __addon__   = xbmcaddon.Addon()
 libs = os.path.join(__addon__.getAddonInfo('path'), 'lib')
 sys.path.append(libs)
+libs = os.path.join(__addon__.getAddonInfo('path'), 'lib/libLGTV_serial')
+sys.path.append(libs)
+libs = os.path.join(__addon__.getAddonInfo('path'), 'lib/serial')
+sys.path.append(libs)
 
 from libLGTV_serial import LGTV
 
 class Settings(object):
     def __init__(self):
-        self.enabled        = True
-        self.tvname         = ''
-        self.notifications  = True
-        self.notifymessage  = ''
-        self.authCount      = 0
-        self.pollCount      = 0
-        self.curTVmode      = 0
-        self.newTVmode      = 0
-        self.pollsec        = 5
-        self.idlesec        = 5
-        self.inProgress     = False
-        self.inScreensaver  = False
+        self.enabled         = True
+        self.tvname          = ''
+        self.notifications   = True
+        self.notifymessage   = ''
+        self.authCount       = 0
+        self.pollCount       = 0
+        self.curTVmode       = 0
+        self.newTVmode       = 0
+        self.pollsec         = 5
+        self.idlesec         = 5
+        self.inProgress      = False
+        self.inScreensaver   = False
         self.skipInScreensaver  = True
-        self.addonname      = __addon__.getAddonInfo('name')
-        self.icon           = __addon__.getAddonInfo('icon')
-        self.command3Dnone  = '3Dnone'
-        self.command3Dsbs   = '3Dsbs'
-        self.command3Dou    = '3Dou'
+        self.addonname       = __addon__.getAddonInfo('name')
+        self.icon            = __addon__.getAddonInfo('icon')
+        self.tvtype          = '42LW650s'
+        self.serialport      = '/dev/ttyUSB0'
+        self.command3Dstatus = '3Dstatus'
+        self.command3Dou     = '3Dou'
+        self.command3Dsbs    = '3Dsbs'
+        self.command3Dnone   = '3Dnone'
         self.load()
 
     def getSetting(self, name, dataType = str):
@@ -94,6 +101,9 @@ class Settings(object):
         self.pollsec            = self.getSetting('pollsec', int)
         self.idlesec            = self.getSetting('idlesec', int)
         self.skipInScreensaver  = self.getSetting('skipInScreensaver', bool)
+        self.tvtype             = self.getSetting('tvtype', str)
+        self.serialport         = self.getSetting('serialport', str)
+        self.command3Dstatus    = self.getSetting('command3Dstatus', str)
         self.command3Dou        = self.getSetting('command3Dou', str)
         self.command3Dsbs       = self.getSetting('command3Dsbs', str)
         self.command3Dnone      = self.getSetting('command3Dnone', str)
@@ -140,9 +150,13 @@ def stereoModeHasChanged():
         return False
 
 def mainStereoChange():
-    model = '42LW650s'  
-    serial_port = "/dev/ttyUSB0"
-    tv = LGTV(model, serial_port)
+    #model = '42LW650s'  
+    #serial_port = "/dev/ttyUSB0"
+    tv = LGTV(settings.tvtype, settings.serialport)
+
+    xbmc.log('3D> mainStereoChange Status', xbmc.LOGNOTICE)
+    toNotify(tv.send(settings.command3Dstatus))
+
     if settings.newTVmode == 1:
         xbmc.log('3D> mainStereoChange 1 / OU', xbmc.LOGNOTICE)
         toNotify(tv.send(settings.command3Dou))
@@ -207,6 +221,7 @@ class MyMonitor(xbmc.Monitor):
             mainTrigger()
 
 def main():
+    xbmc.log('3D> Start', xbmc.LOGNOTICE)
     global dialog, dialogprogress, responseMap, settings, monitor
     dialog = xbmcgui.Dialog()
     dialogprogress = xbmcgui.DialogProgress()
@@ -222,6 +237,7 @@ def main():
                     continue
         xbmc.sleep(1000)
     onAbort()
+    xbmc.log('3D> Stop', xbmc.LOGNOTICE)
 
 if __name__ == '__main__':
     main()

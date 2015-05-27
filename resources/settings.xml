@@ -2,7 +2,7 @@
 <settings>
   <category label="30000">
     <setting label="30001" id="enabled" type="bool" default="true"/>
-    <setting label="30006" id="notifications" type="bool" default="true"/>
+    <setting label="30002" id="notifications" type="bool" default="true"/>
   </category>
   <category label="30010">
     <setting label="30011" id="curTVmode" type="select" lvalues="30110|30111|30112" default="0"/>
@@ -12,10 +12,11 @@
   </category>
   <category label="30020">
     <setting label="30021" id="tvtype" type="text" default="42LW650s"/>
-    <setting label="30022" id="command3Dstatus" type="text" default="3Dstatus"/>
-    <setting label="30023" id="command3Dou" type="text" default="3Dou"/>
-    <setting label="30024" id="command3Dsbs" type="text" default="3Dsbs"/>
-    <setting label="30025" id="command3Dnone" type="text" default="3Dnone"/>
-    <setting label="30026" type="lsep"/>
+    <setting label="30022" id="serialport" type="text" default="/dev/ttyUSB0"/>
+    <setting label="30023" id="command3Dstatus" type="text" default="3Dstatus"/>
+    <setting label="30024" id="command3Dou" type="text" default="3Dou"/>
+    <setting label="30025" id="command3Dsbs" type="text" default="3Dsbs"/>
+    <setting label="30026" id="command3Dnone" type="text" default="3Dnone"/>
+    <setting label="30027" type="lsep"/>
   </category>
 </settings>
