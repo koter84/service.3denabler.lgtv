@@ -41,6 +41,7 @@ from libLGTV_serial import LGTV
 
 class Settings(object):
     def __init__(self):
+        xbmc.log('3D> Settings.__init__()', xbmc.LOGNOTICE)
         self.enabled         = True
         self.tvname          = ''
         self.notifications   = True
@@ -65,6 +66,7 @@ class Settings(object):
         self.load()
 
     def getSetting(self, name, dataType = str):
+        xbmc.log('3D> Settings.getSetting()', xbmc.LOGNOTICE)
         value = __addon__.getSetting(name)
         if dataType == bool:
             if value.lower() == 'true':
@@ -79,6 +81,7 @@ class Settings(object):
         return value
 
     def setSetting(self, name, value):
+        xbmc.log('3D> Settings.setSetting()', xbmc.LOGNOTICE)
         if type(value) == bool:
             if value:
                 value = 'true'
@@ -90,10 +93,11 @@ class Settings(object):
         __addon__.setSetting(name, value)
 
     def getLocalizedString(self, stringid):
+        xbmc.log('3D> Settings.getLocalizedString()', xbmc.LOGNOTICE)
         return __addon__.getLocalizedString(stringid)
 
     def load(self):
-        xbmc.log('3D> loading Settings', xbmc.LOGNOTICE)
+        xbmc.log('3D> Settings.load()', xbmc.LOGNOTICE)
         self.enabled            = self.getSetting('enabled', bool)
         self.tvname             = self.getSetting('tvname', str)
         self.notifications      = self.getSetting('notifications', bool)
@@ -109,12 +113,14 @@ class Settings(object):
         self.command3Dnone      = self.getSetting('command3Dnone', str)
 
 def toNotify(message):
+    xbmc.log('3D> toNotify()', xbmc.LOGNOTICE)
     if len(settings.notifymessage) == 0:
         settings.notifymessage = message
     else:
         settings.notifymessage += '. ' + message
 
 def notify(timeout = 5000):
+    xbmc.log('3D> notify()', xbmc.LOGNOTICE)
     if len(settings.notifymessage) == 0:
         return
     if settings.notifications:
@@ -123,6 +129,7 @@ def notify(timeout = 5000):
     settings.notifymessage = ''
 
 def getStereoscopicMode():
+    xbmc.log('3D> getStereoscopicMode()', xbmc.LOGNOTICE)
     query = '{"jsonrpc": "2.0", "method": "GUI.GetProperties", "params": {"properties": ["stereoscopicmode"]}, "id": 1}'
     result = xbmc.executeJSONRPC(query)
     json = simplejson.loads(result)
@@ -137,6 +144,7 @@ def getStereoscopicMode():
     return ret
 
 def getTranslatedStereoscopicMode():
+    xbmc.log('3D> getTranslatedStereoscopicMode()', xbmc.LOGNOTICE)
     mode = getStereoscopicMode()
     xbmc.log('3D> getTranslatedStereoscopicMode: ' + str(mode), xbmc.LOGNOTICE)
     if mode == 'split_horizontal': return 1
@@ -144,12 +152,14 @@ def getTranslatedStereoscopicMode():
     else: return 0
 
 def stereoModeHasChanged():
+    xbmc.log('3D> stereoModeHasChanged()', xbmc.LOGNOTICE)
     if settings.curTVmode != settings.newTVmode:
         return True
     else:
         return False
 
 def mainStereoChange():
+    xbmc.log('3D> mainStereoChange()', xbmc.LOGNOTICE)
     #model = '42LW650s'  
     #serial_port = "/dev/ttyUSB0"
     tv = LGTV(settings.tvtype, settings.serialport)
@@ -170,7 +180,7 @@ def mainStereoChange():
     notify()
 
 def mainTrigger():
-    xbmc.log('3D> mainTrigger', xbmc.LOGNOTICE)
+    xbmc.log('3D> mainTrigger()', xbmc.LOGNOTICE)
     if not settings.inProgress:
         settings.inProgress = True
         settings.newTVmode = getTranslatedStereoscopicMode()
@@ -179,6 +189,7 @@ def mainTrigger():
         settings.inProgress = False
 
 def onAbort():
+    xbmc.log('3D> onAbort()', xbmc.LOGNOTICE)
     # On exit switch TV back to None 3D
     settings.newTVmode = 0
     if stereoModeHasChanged():
@@ -187,25 +198,24 @@ def onAbort():
 
 class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
+        xbmc.log('3D> MyMonitor.__init__()', xbmc.LOGNOTICE)
         xbmc.Monitor.__init__(self)
 
     def onSettingsChanged( self ):
-        xbmc.log('3D> Settings changed', xbmc.LOGNOTICE)
+        xbmc.log('3D> MyMonitor.onSettingsChanged()', xbmc.LOGNOTICE)
         settings.load()
-        checkAndDiscover()
 
     def onScreensaverDeactivated(self):
-        # If detect mode is poll only - do not react on events
-        xbmc.log('3D> Screensaver Deactivated', xbmc.LOGNOTICE)
+        xbmc.log('3D> MyMonitor.onScreensaverDeactivated()', xbmc.LOGNOTICE)
         settings.inScreensaver = False
 
     def onScreensaverActivated(self):
-        # If detect mode is poll only - do not react on events
-        xbmc.log('3D> Screensaver Activated', xbmc.LOGNOTICE)
+        xbmc.log('3D> MyMonitor.onScreensaverActivated()', xbmc.LOGNOTICE)
         if settings.skipInScreensaver:
             settings.inScreensaver = True
 
     def onNotification(self, sender, method, data):
+        xbmc.log('3D> MyMonitor.onNotification()', xbmc.LOGNOTICE)
         # If detect mode is poll only - do not react on events
         xbmc.log('3D> Notification Received: ' + str(sender) + ': ' + str(method) + ': ' + str(data), xbmc.LOGNOTICE)
         if method == 'Player.OnPlay':
@@ -221,7 +231,7 @@ class MyMonitor(xbmc.Monitor):
             mainTrigger()
 
 def main():
-    xbmc.log('3D> Start', xbmc.LOGNOTICE)
+    xbmc.log('3D> main()', xbmc.LOGNOTICE)
     global dialog, dialogprogress, responseMap, settings, monitor
     dialog = xbmcgui.Dialog()
     dialogprogress = xbmcgui.DialogProgress()
@@ -237,7 +247,7 @@ def main():
                     continue
         xbmc.sleep(1000)
     onAbort()
-    xbmc.log('3D> Stop', xbmc.LOGNOTICE)
+    xbmc.log('3D> main() END', xbmc.LOGNOTICE)
 
 if __name__ == '__main__':
     main()
