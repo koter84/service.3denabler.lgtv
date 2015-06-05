@@ -38,6 +38,7 @@ libs = os.path.join(__addon__.getAddonInfo('path'), 'lib/serial')
 sys.path.append(libs)
 
 from libLGTV_serial import LGTV
+import serial
 
 class Settings(object):
     def __init__(self):
@@ -57,8 +58,8 @@ class Settings(object):
         self.skipInScreensaver  = True
         self.addonname       = __addon__.getAddonInfo('name')
         self.icon            = __addon__.getAddonInfo('icon')
-        self.tvtype          = '42LW650s'
-        self.serialport      = '/dev/ttyUSB0'
+        self.tvtype          = '42LW650'
+        self.serialport      = '/dev/ttyS0'
         self.command3Dstatus = '3Dstatus'
         self.command3Dou     = '3Dou'
         self.command3Dsbs    = '3Dsbs'
@@ -160,24 +161,39 @@ def stereoModeHasChanged():
 
 def mainStereoChange():
     xbmc.log('3D> mainStereoChange()', xbmc.LOGNOTICE)
-    #model = '42LW650s'  
-    #serial_port = "/dev/ttyUSB0"
-    tv = LGTV(settings.tvtype, settings.serialport)
+    #model = '42LW650'  
+    #serial_port = "/dev/ttyS0"
+    #xbmc.log('3D> mainStereoChange tvtype ' + settings.tvtype, xbmc.LOGNOTICE)
+    #xbmc.log('3D> mainStereoChange serialport ' + settings.serialport, xbmc.LOGNOTICE)
+    #tv = LGTV(settings.tvtype, settings.serialport)
 
     xbmc.log('3D> mainStereoChange Status', xbmc.LOGNOTICE)
-    toNotify(tv.send(settings.command3Dstatus))
+    #toNotify(tv.send(settings.command3Dstatus))
 
     if settings.newTVmode == 1:
         xbmc.log('3D> mainStereoChange 1 / OU', xbmc.LOGNOTICE)
-        toNotify(tv.send(settings.command3Dou))
+        #toNotify(tv.send(settings.command3Dou))
+        ser = serial.Serial(0) # open first serial port
+        ser.write("xt 0 0 0 0 0\r")
+        print ser.read(10) # read a '\n' terminated line
+        ser.close() # close port
     elif settings.newTVmode == 2:
         xbmc.log('3D> mainStereoChange 2 / SBS', xbmc.LOGNOTICE)
-        toNotify(tv.send(settings.command3Dsbs))
+        #toNotify(tv.send(settings.command3Dsbs))
+        ser = serial.Serial(0) # open first serial port
+        ser.write("xt 0 0 1 0 0\r")
+        print ser.read(10) # read a '\n' terminated line
+        ser.close() # close port
     else:
         xbmc.log('3D> mainStereoChange 0 / None', xbmc.LOGNOTICE)
-        toNotify(tv.send(settings.command3Dnone))
+        #toNotify(tv.send(settings.command3Dnone))
+        ser = serial.Serial(0) # open first serial port
+        ser.write("xt 0 1 0 0 0\r")
+        print ser.read(10) # read a '\n' terminated line
+        ser.close() # close port
     # Notify of all messages
     notify()
+    settings.curTVmode = settings.newTVmode
 
 def mainTrigger():
     xbmc.log('3D> mainTrigger()', xbmc.LOGNOTICE)
