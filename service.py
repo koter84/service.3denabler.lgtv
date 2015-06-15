@@ -55,7 +55,6 @@ class Settings(object):
         self.idlesec         = 5
         self.inProgress      = False
         self.inScreensaver   = False
-        self.skipInScreensaver  = True
         self.addonname       = __addon__.getAddonInfo('name')
         self.icon            = __addon__.getAddonInfo('icon')
         self.tvtype          = '42LW650'
@@ -105,7 +104,6 @@ class Settings(object):
         self.curTVmode          = self.getSetting('curTVmode', int)
         self.pollsec            = self.getSetting('pollsec', int)
         self.idlesec            = self.getSetting('idlesec', int)
-        self.skipInScreensaver  = self.getSetting('skipInScreensaver', bool)
         self.tvtype             = self.getSetting('tvtype', str)
         self.serialport         = self.getSetting('serialport', str)
         self.command3Dstatus    = self.getSetting('command3Dstatus', str)
@@ -225,10 +223,32 @@ class MyMonitor(xbmc.Monitor):
         xbmc.log('3D> MyMonitor.onScreensaverDeactivated()', xbmc.LOGNOTICE)
         settings.inScreensaver = False
 
+        # ToDo - check if tv is on? turn on when off?
+        ser = serial.Serial(0) # open first serial port
+        ser.write("ka 0 FF\r")
+        tv_onoff = ser.read(10) # read a '\n' terminated line
+        print tv_onoff
+        ser.close() # close port
+
+        if tv_onoff == "a 01 OK00x":
+            xbmc.log('3D> TV is OFF! Turn it ON!', xbmc.LOGNOTICE)
+
+        if not xbmc.Player().isPlayingVideo():
+            # switch to kodi
+            ser = serial.Serial(0) # open first serial port
+            ser.write("xb 0 60\r")
+            print ser.read(10) # read a '\n' terminated line
+            ser.close() # close port
+
     def onScreensaverActivated(self):
         xbmc.log('3D> MyMonitor.onScreensaverActivated()', xbmc.LOGNOTICE)
-        if settings.skipInScreensaver:
-            settings.inScreensaver = True
+        settings.inScreensaver = True
+        if not xbmc.Player().isPlayingVideo():
+            # switch to upc/ziggo
+            ser = serial.Serial(0) # open first serial port
+            ser.write("xb 0 70\r")
+            print ser.read(10) # read a '\n' terminated line
+            ser.close() # close port
 
     def onNotification(self, sender, method, data):
         xbmc.log('3D> MyMonitor.onNotification()', xbmc.LOGNOTICE)
@@ -253,6 +273,10 @@ def main():
     dialogprogress = xbmcgui.DialogProgress()
     settings = Settings()
     monitor = MyMonitor()
+
+    # ToDo - check if TV is on before sending commands...
+    # or it might be because of the turn-on / turn-off commands that the tv doesn't respond
+
     while not xbmc.abortRequested:
         if not settings.inScreensaver:
             settings.pollCount += 1
