@@ -11,12 +11,9 @@
     <setting label="30014" id="skipInScreensaver" type="bool" default="true"/>
   </category>
   <category label="30020">
-    <setting label="30021" id="tvtype" type="text" default="42LW650"/>
-    <setting label="30022" id="serialport" type="text" default="/dev/ttyS0"/>
-    <setting label="30023" id="command3Dstatus" type="text" default="3Dstatus"/>
-    <setting label="30024" id="command3Dou" type="text" default="3Dou"/>
-    <setting label="30025" id="command3Dsbs" type="text" default="3Dsbs"/>
-    <setting label="30026" id="command3Dnone" type="text" default="3Dnone"/>
-    <setting label="30027" type="lsep"/>
+    <setting label="30021" id="TVserialport" type="text" default="/dev/ttyS0"/>
+    <setting label="30022" id="TVcmd3Dou" type="text" default="xt 0 0 0 0 0"/>
+    <setting label="30023" id="TVcmd3Dsbs" type="text" default="xt 0 0 1 0 0"/>
+    <setting label="30024" id="TVcmd3Dnone" type="text" default="xt 0 1 0 0 0"/>
   </category>
 </settings>

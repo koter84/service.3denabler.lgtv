@@ -11,12 +11,9 @@
   <string id="30012">Poll frequency (seconds)</string>
   <string id="30013">Skip poll if inactive more than (seconds)</string>
   <string id="30014">Skip poll during screensaver</string>
-  <string id="30020">libLGTV_serial</string>
-  <string id="30021">TV Model Number/Type</string>
-  <string id="30022">TV Connected Serial Port</string>
-  <string id="30023">3D Status command</string>
-  <string id="30024">3D Over/Under command</string>
-  <string id="30025">3D Side by Side command</string>
-  <string id="30026">3D Back to None command</string>
-  <string id="30027">Supported commands: check libLGTV_serial</string>
+  <string id="30020">TV SerialPort</string>
+  <string id="30021">TV Connected Serial Port</string>
+  <string id="30022">3D Over/Under command</string>
+  <string id="30023">3D Side by Side command</string>
+  <string id="30024">3D Back to None command</string>
 </strings>

@@ -1,6 +1,7 @@
 '''
-    3D Enabler [for] Samsung TV - addon for XBMC to enable 3D mode
+    3D Enabler [for] LG TV - addon for Kodi to enable 3D mode
     Copyright (C) 2014  Pavel Kuzub
+    Copyright (C) 2015  Dennis Koot
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
